@@ -32,7 +32,7 @@ public class AnnouncementService {
         announcement.setContent(request.getContent());
 
         // Fetch teacher from DB
-        Teacher teacher = teacherRepository.findById(request.getTeacherId())
+        Teacher teacher = teacherRepository.findByTeacherId(request.getTeacherId())
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
         announcement.setTeacher(teacher);
 

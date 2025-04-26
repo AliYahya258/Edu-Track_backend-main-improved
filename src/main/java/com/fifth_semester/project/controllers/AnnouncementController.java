@@ -28,7 +28,7 @@ public class AnnouncementController {
 
     // Create a new announcement
     @PostMapping
-    //@PreAuthorize("hasRole('TEACHER')")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<AnnouncementResponse> createAnnouncement(@RequestBody AnnouncementRequest request) {
         Announcement announcement = announcementService.createAnnouncement(request);
 
@@ -59,6 +59,7 @@ public class AnnouncementController {
 
     // Get a specific announcement by ID
     @GetMapping("/{announcementId}")
+    @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<AnnouncementResponse> getAnnouncement(@PathVariable Long announcementId) {
         // Implement this method in your service
         AnnouncementResponse announcement = announcementService.getAnnouncementById(announcementId);

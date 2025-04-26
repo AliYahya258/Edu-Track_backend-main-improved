@@ -3,10 +3,10 @@ package com.fifth_semester.project.dtos.request;
 public class AnnouncementRequest {
     private String title;
     private String content;
-    private Long teacherId;
+    private String teacherId;
     private Long sectionId;
 
-    public AnnouncementRequest(String title, Long sectionId, Long teacherId, String content) {
+    public AnnouncementRequest(String title, Long sectionId, String teacherId, String content) {
         this.title = title;
         this.sectionId = sectionId;
         this.teacherId = teacherId;
@@ -29,11 +29,11 @@ public class AnnouncementRequest {
         this.sectionId = sectionId;
     }
 
-    public Long getTeacherId() {
+    public String getTeacherId() {
         return teacherId;
     }
 
-    public void setTeacherId(Long teacherId) {
+    public void setTeacherId(String teacherId) {
         this.teacherId = teacherId;
     }
 
