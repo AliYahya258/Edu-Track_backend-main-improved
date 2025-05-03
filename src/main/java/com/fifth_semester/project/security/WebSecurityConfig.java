@@ -140,17 +140,17 @@ public class WebSecurityConfig { // extends WebSecurityConfigurerAdapter {
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
                     // Authentication rules for announcements
-                    .requestMatchers(HttpMethod.GET, "/api/announcements/**").hasAnyRole("STUDENT", "TEACHER")
-                    .requestMatchers(HttpMethod.POST, "/api/announcements/**").hasRole("TEACHER")
-                    .requestMatchers(HttpMethod.PUT, "/api/announcements/**").hasRole("TEACHER")
-                    .requestMatchers(HttpMethod.DELETE, "/api/announcements/**").hasRole("TEACHER")
+//                    .requestMatchers(HttpMethod.GET, "/api/announcements/**").hasAnyRole("STUDENT", "TEACHER")
+//                    .requestMatchers(HttpMethod.POST, "/api/announcements/**").hasRole("TEACHER")
+//                    .requestMatchers(HttpMethod.PUT, "/api/announcements/**").hasRole("TEACHER")
+//                    .requestMatchers(HttpMethod.DELETE, "/api/announcements/**").hasRole("TEACHER")
 
                     // Allow authentication and testing endpoints
                     .requestMatchers("/api/auth/**").permitAll()
                     .requestMatchers(SWAGGER_WHITELIST).permitAll()
                     .requestMatchers("/api/test/**").permitAll()
-
-                    // Any other request must be authenticated
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                            // Any other request must be authenticated
                     .anyRequest().authenticated()
             );
 

@@ -18,6 +18,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/announcements")
+@CrossOrigin(origins = "http://localhost:3000")
 public class AnnouncementController {
 
     @Autowired
@@ -27,7 +28,7 @@ public class AnnouncementController {
     private FileStorageService fileStorageService;
 
     // Create a new announcement
-    @PostMapping
+    @PostMapping("/course/{courseId}/section/{sectionName}")
     @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<AnnouncementResponse> createAnnouncement(@RequestBody AnnouncementRequest request) {
         Announcement announcement = announcementService.createAnnouncement(request);
@@ -49,11 +50,22 @@ public class AnnouncementController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    // Get all announcements for a specific course and section
+    @GetMapping("/course/{courseId}/section/{sectionName}")
+    @PreAuthorize("hasRole('STUDENT') or hasRole('TEACHER')")
+    public ResponseEntity<List<AnnouncementResponse>> getAnnouncementsByCourseAndSection(
+            @PathVariable Long courseId,
+            @PathVariable String sectionName) {
+        List<AnnouncementResponse> announcements =
+                announcementService.getAnnouncementsByCourseAndSection(courseId, sectionName);
+        return ResponseEntity.ok(announcements);
+    }
+
     // Get all announcements for a specific section
-    @GetMapping("/section/{sectionId}")
-    @PreAuthorize("hasRole('TEACHER')")
-    public ResponseEntity<List<AnnouncementResponse>> getAnnouncementsBySection(@PathVariable Long sectionId) {
-        List<AnnouncementResponse> announcements = announcementService.getAnnouncementsBySection(sectionId);
+    @GetMapping("/section/{sectionName}")
+    @PreAuthorize("hasRole('TEACHER')or hasRole('STUDENT')")
+    public ResponseEntity<List<AnnouncementResponse>> getAnnouncementsBySection(@PathVariable String sectionName) {
+        List<AnnouncementResponse> announcements = announcementService.getAnnouncementsBySection(sectionName);
         return ResponseEntity.ok(announcements);
     }
 

@@ -4,13 +4,16 @@ public class AnnouncementRequest {
     private String title;
     private String content;
     private String teacherId;
-    private Long sectionId;
+    private String sectionName;
+    private Long courseId;
 
-    public AnnouncementRequest(String title, Long sectionId, String teacherId, String content) {
+
+    public AnnouncementRequest(String title, String sectionName, String teacherId, String content, Long courseId) {
         this.title = title;
-        this.sectionId = sectionId;
+        this.sectionName = sectionName;
         this.teacherId = teacherId;
         this.content = content;
+        this.courseId = courseId;
     }
 
     public String getTitle() {
@@ -21,16 +24,16 @@ public class AnnouncementRequest {
         this.title = title;
     }
 
-    public Long getSectionId() {
-        return sectionId;
-    }
-
-    public void setSectionId(Long sectionId) {
-        this.sectionId = sectionId;
-    }
-
     public String getTeacherId() {
         return teacherId;
+    }
+
+    public String getSectionName() {
+        return sectionName;
+    }
+
+    public void setSectionName(String sectionName) {
+        this.sectionName = sectionName;
     }
 
     public void setTeacherId(String teacherId) {
@@ -43,5 +46,13 @@ public class AnnouncementRequest {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public Long getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(Long courseId) {
+        this.courseId = courseId;
     }
 }

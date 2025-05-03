@@ -5,6 +5,6 @@ import java.util.List;
 
 
 public interface AnnouncementRepository extends JpaRepository<Announcement, Long> {
-    List<Announcement> findBySectionId(Long sectionId);
+    List<Announcement> findBySectionSectionName(String sectionName);
 }
 

@@ -15,6 +15,9 @@ import java.util.Optional;
 public class AnnouncementService {
 
     @Autowired
+    private CourseRepository CourseRepository;
+
+    @Autowired
     private AnnouncementRepository announcementRepository;
 
     @Autowired
@@ -36,11 +39,18 @@ public class AnnouncementService {
                 .orElseThrow(() -> new RuntimeException("Teacher not found"));
         announcement.setTeacher(teacher);
 
-        // Fetch section from DB
-        Section section = sectionRepository.findById(request.getSectionId())
-                .orElseThrow(() -> new RuntimeException("Section not found"));
-        announcement.setSection(section);
+        Course course = CourseRepository.findById(request.getCourseId())
+                .orElseThrow(() -> new RuntimeException("Course not found with ID: " + request.getCourseId()));
 
+        Optional<Section> sectionOpt = sectionRepository.findBySectionNameAndCourse(request.getSectionName(), course);
+
+        // Fetch section from DB
+        //Section section = sectionRepository.findBySectionNameAndCourse(request.getSectionName())
+                //.orElseThrow(() -> new RuntimeException("Section not found"));
+        if(sectionOpt.isPresent()) {
+            Section section = sectionOpt.get();
+            announcement.setSection(section);
+        }
         announcement.setTimestamp(LocalDateTime.now());
 
         return announcementRepository.save(announcement);
@@ -58,8 +68,47 @@ public class AnnouncementService {
         announcementFileRepository.save(file);
     }
 
-    public List<AnnouncementResponse> getAnnouncementsBySection(Long sectionId) {
-        List<Announcement> announcements = announcementRepository.findBySectionId(sectionId);
+//    public List<AnnouncementResponse> getAnnouncementsBySection(Long sectionId) {
+//        log.info("Getting announcements for section ID: {}", sectionId);
+//        List<Announcement> announcements = announcementRepository.findBySectionId(sectionId);
+//        log.info("Found {} announcements for section ID: {}", announcements.size(), sectionId);
+//
+//        return announcements.stream().map(this::convertToAnnouncementResponse).toList();
+//    }
+
+    public List<AnnouncementResponse> getAnnouncementsByCourseAndSection(Long courseId, String sectionName) {
+        Course course = CourseRepository.findById(courseId)
+                .orElseThrow(() -> new RuntimeException("Course not found with ID: " + courseId));
+
+        Optional<Section> sectionOpt = sectionRepository.findBySectionNameAndCourse(sectionName, course);
+
+        if (sectionOpt.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        Section section = sectionOpt.get();
+        List<Announcement> announcements = announcementRepository.findBySectionSectionName(section.getSectionName());
+
+        return announcements.stream().map(this::convertToAnnouncementResponse).toList();
+    }
+
+    private AnnouncementResponse convertToAnnouncementResponse(Announcement announcement) {
+        List<String> fileUrls = announcement.getFiles() != null ?
+                announcement.getFiles().stream().map(AnnouncementFile::getFileUrl).toList() :
+                new ArrayList<>();
+
+        return new AnnouncementResponse(
+                announcement.getId(),
+                announcement.getContent(),
+                announcement.getTitle(),
+                announcement.getTimestamp(),
+                announcement.getTeacher().getUsername(),
+                fileUrls
+        );
+    }
+
+    public List<AnnouncementResponse> getAnnouncementsBySection(String sectionName) {
+        List<Announcement> announcements = announcementRepository.findBySectionSectionName(sectionName);
 
         return announcements.stream().map(a -> {
             List<String> fileUrls = a.getFiles() != null ?
@@ -105,8 +154,8 @@ public class AnnouncementService {
             announcement.setContent(request.getContent());
 
             // Update section if needed
-            if (!announcement.getSection().getId().equals(request.getSectionId())) {
-                Section section = sectionRepository.findById(request.getSectionId())
+            if (!announcement.getSection().getSectionName().equals(request.getSectionName())) {
+                Section section = sectionRepository.findBySectionName(request.getSectionName())
                         .orElseThrow(() -> new RuntimeException("Section not found"));
                 announcement.setSection(section);
             }
