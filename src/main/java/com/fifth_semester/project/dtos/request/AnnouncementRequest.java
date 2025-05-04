@@ -3,15 +3,13 @@ package com.fifth_semester.project.dtos.request;
 public class AnnouncementRequest {
     private String title;
     private String content;
-    private String teacherId;
     private String sectionName;
     private Long courseId;
 
 
-    public AnnouncementRequest(String title, String sectionName, String teacherId, String content, Long courseId) {
+    public AnnouncementRequest(String title, String sectionName, String content, Long courseId) {
         this.title = title;
         this.sectionName = sectionName;
-        this.teacherId = teacherId;
         this.content = content;
         this.courseId = courseId;
     }
@@ -24,9 +22,6 @@ public class AnnouncementRequest {
         this.title = title;
     }
 
-    public String getTeacherId() {
-        return teacherId;
-    }
 
     public String getSectionName() {
         return sectionName;
@@ -34,10 +29,6 @@ public class AnnouncementRequest {
 
     public void setSectionName(String sectionName) {
         this.sectionName = sectionName;
-    }
-
-    public void setTeacherId(String teacherId) {
-        this.teacherId = teacherId;
     }
 
     public String getContent() {

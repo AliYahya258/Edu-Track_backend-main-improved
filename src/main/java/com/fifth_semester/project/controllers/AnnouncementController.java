@@ -3,6 +3,9 @@ package com.fifth_semester.project.controllers;
 import com.fifth_semester.project.dtos.request.AnnouncementRequest;
 import com.fifth_semester.project.dtos.response.AnnouncementResponse;
 import com.fifth_semester.project.entities.Announcement;
+import com.fifth_semester.project.entities.Teacher;
+import com.fifth_semester.project.repositories.TeacherRepository;
+import com.fifth_semester.project.security.services.UserDetailsImpl;
 import com.fifth_semester.project.services.AnnouncementService;
 import com.fifth_semester.project.services.FileStorageService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +13,9 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -25,13 +31,21 @@ public class AnnouncementController {
     private AnnouncementService announcementService;
 
     @Autowired
+    private TeacherRepository teacherRepository;
+
+    @Autowired
     private FileStorageService fileStorageService;
 
     // Create a new announcement
-    @PostMapping("/course/{courseId}/section/{sectionName}")
+    @PostMapping("/courseId/sectionName")
     @PreAuthorize("hasRole('TEACHER')")
     public ResponseEntity<AnnouncementResponse> createAnnouncement(@RequestBody AnnouncementRequest request) {
-        Announcement announcement = announcementService.createAnnouncement(request);
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        UserDetailsImpl userDetails = (UserDetailsImpl) authentication.getPrincipal();
+        Teacher teacher = teacherRepository.findByEmail(userDetails.getEmail())
+                .orElseThrow(() -> new RuntimeException("Teacher not found"));
+
+        Announcement announcement = announcementService.createAnnouncement(request,teacher);
 
         // Convert to response DTO (you'll need to implement this in your service)
         List<String> fileUrls = announcement.getFiles() != null ?

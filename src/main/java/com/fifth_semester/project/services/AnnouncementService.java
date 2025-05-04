@@ -29,15 +29,13 @@ public class AnnouncementService {
     @Autowired
     private SectionRepository sectionRepository;
 
-    public Announcement createAnnouncement(AnnouncementRequest request) {
+    public Announcement createAnnouncement(AnnouncementRequest request,Teacher teacher) {
         Announcement announcement = new Announcement();
         announcement.setTitle(request.getTitle());
         announcement.setContent(request.getContent());
 
-        // Fetch teacher from DB
-        Teacher teacher = teacherRepository.findByTeacherId(request.getTeacherId())
-                .orElseThrow(() -> new RuntimeException("Teacher not found"));
         announcement.setTeacher(teacher);
+
 
         Course course = CourseRepository.findById(request.getCourseId())
                 .orElseThrow(() -> new RuntimeException("Course not found with ID: " + request.getCourseId()));
@@ -46,7 +44,7 @@ public class AnnouncementService {
 
         // Fetch section from DB
         //Section section = sectionRepository.findBySectionNameAndCourse(request.getSectionName())
-                //.orElseThrow(() -> new RuntimeException("Section not found"));
+        //.orElseThrow(() -> new RuntimeException("Section not found"));
         if(sectionOpt.isPresent()) {
             Section section = sectionOpt.get();
             announcement.setSection(section);
